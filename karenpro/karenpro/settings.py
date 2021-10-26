@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import django_heroku
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-diaxi$@ah_89!z4*kg&6kd$ynl+1a-o7ykwuftlj)n)m$kair+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.11', '192.168.10.220','192.168.0.106']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'karen',
+    'whitenoise.runserver_nostatic'
     
 ]
 
@@ -52,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'karenpro.urls'
@@ -73,7 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'karenpro.wsgi.application'
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -81,13 +85,15 @@ WSGI_APPLICATION = 'karenpro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'karensenior',
-        'USER':'bd1ba3870e770f',
-        'PASSWORD':'bee54964',
-        'HOST':'us-cdbr-east-04.cleardb.com',
-        'PORT':'3306'
+        'DATABASE': 'd9idqv9qd8rabt',
+        'USER':'yjquqhddvcgstr',
+        'PASSWORD':'12cdd2c7b3047e465f5a2eb5d399f2d21c3159fc0cf41dd1b320275a037c4b89',
+        'HOST':'ec2-35-171-90-188.compute-1.amazonaws.com',
+        'PORT':'5432'
     }
 }
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation

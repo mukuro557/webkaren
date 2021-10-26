@@ -9,6 +9,13 @@ django-heroku = "*"
 Django = "*"
 djangorestframework-jsonapi = "*"
 djangorestframework = "*"
+speechrecognition = "*"
+pythainlp = "*"
+mysqlclient = "*"
+deepcut = "*"
+whitenoise = "*"
+dj-database-url = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

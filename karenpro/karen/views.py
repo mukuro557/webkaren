@@ -11,7 +11,6 @@ from django.http import JsonResponse
 
 from pythainlp import word_tokenize
 import speech_recognition as sr
-from wordcut import Wordcut
 import deepcut
 import json
 
