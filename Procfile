@@ -1,1 +1,1 @@
-web: gunicorn karen.wsgi
+web: gunicorn karenpro.wsgi
