@@ -1,0 +1,177 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% load static %}
+
+<script src="{%static 'script/mainpage.js'%}"></script>
+<link href="{% static 'mainpagesty.css'%}" rel="stylesheet">
+
+
+<div class="row">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">คำศัพท์</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <button id="add_but" type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+                    data-target=".modal">
+                    <span data-feather="plus"></span>
+                    เพิ่ม
+                </button>
+            </div>
+        </div>
+        {% if uploaded_file_url %}
+        <p><a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+        {% endif %}
+        <!-- table -->
+
+        <div class="card-body">
+            <table id="myTable" class="table table-striped table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>คำศัพท์ภาษาไทย</th>
+                        <th>เสียง</th>
+                        <th>การกระทำ</th>
+                    </tr>
+                </thead>
+                {% for word in allword %}
+                <tr>
+                    <td>{{word.Word_th}}</td>
+                    <td> <button id='{{word.Word_th}}' data-target="{{word.Sound}}" class='btn1'
+                            style='background-color: grey;width: 40px;'><i class='fa fa-play'></i>
+                        </button>
+                        <audio id="{{word.Sound}}">
+                        </audio>
+                    </td>
+                    <td> <button id='{{word.pk}}' class='btn btn_edit' style='background-color: #A8DADC;color:white'
+                            target='{{word.Word_th}}' data-toggle="modal" data-target=".modal">แก้ไข</button>
+                        <form class="" action="/delete/{{word.pk}}" method="POST">
+                            {% csrf_token %}
+                            <script LANGUAGE="JavaScript">
+
+                                function confirmSubmit(word) {
+                                    var agree = confirm("คุณต้องการลบคำว่า '" + word + "' ใช่หรือไม่?");
+                                    if (agree)
+                                        return true;
+                                    else
+                                        return false;
+                                }
+
+                            </script>
+
+                            <button type="submit" id="deletebut" class='btn btn_delete' name="submit"
+                                style='background-color: #FFA69E;color:white' value="{{word.pk}}"
+                                onclick="return confirmSubmit('{{word.Word_th}}')">ลบ</button>
+                        </form>
+                        <a>
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- end table -->
+
+        <!-- modal -->
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">เพิ่ม</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="post" enctype="multipart/form-data" id="formcheck">
+                            {% csrf_token %}
+                            <script LANGUAGE="JavaScript">
+
+                                function confirmadd() {
+                                    let word
+                                    let fileInput = document.getElementById('file');
+                                    var fileName = fileInput.value.split(/(\\|\/)/g).pop();
+
+                                    if (fileName == '' || fileName == null || fileName == undefined) {
+                                        var agree = confirm("กรุณาใส่ข้อมูลให้ครบ");
+                                        return false;
+                                    } else {
+                                        if ($('#exampleModalLabel').val() == 'เพิ่ม') {
+                                            word = $("#recipient-name").val()
+                                            var agree = confirm("คุณต้องการเพิ่มคำว่า '" + word + "' ใช่หรือไม่?");
+                                        } else {
+                                            word = $("#recipient-name").val()
+                                            var agree = confirm("คุณต้องการแก้คำว่า '" + word + "' ใช่หรือไม่?");
+                                        }
+
+                                        if (agree)
+                                            return true;
+                                        else
+                                            return false;
+                                    }
+                                }
+
+                            </script>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">คำศัพท์:</label>
+                                <input type="text" class="form-control" id="recipient-name" placeholder="คำภาษาไทย"
+                                    name="wordth">
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">อัพโหลดเสียง</label>
+                                <div class="custom-file">
+                                    <input type="file" name="myfile" id="file">
+                                    <br><br>
+                                </div>
+                            </div>
+                            <div id="explain"></div>
+                            <button type="button" class="btn border" style="background-color: white;color: black;"
+                                data-dismiss="modal">ยกเลิก</button>
+                            <button type="submit" class="btn btncon " onclick="return confirmadd()"
+                                style="background-color: #457B9D;color: white;">ยืนยัน</button>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#myTable tbody").on("click", ".btn_edit", function () {
+            var id = this.id;
+            var x = document.getElementById(id).getAttribute("target");
+            $('#exampleModalLabel').text('แก้ไข')
+            $('#exampleModalLabel').val('แก้ไข')
+            $("#recipient-name").val(x)
+            document.getElementById('formcheck').action = '/editword/' + id
+            var i = document.getElementById('formcheck').getAttribute("action");
+        });
+
+
+        $("#add_but").on("click", function () {
+            $('#exampleModalLabel').text('เพิ่ม')
+            $('#exampleModalLabel').val('เพิ่ม')
+            $("#recipient-name").val('')
+            $('.custom-file-label').val('')
+            document.getElementById('formcheck').action = '/addword'
+        });
+
+        $(".btn1").on("click", function () {
+
+            var y = document.getElementById(this.id).getAttribute("data-target");
+            var audio = document.getElementById(y);
+            audio.currentTime = 0;
+            $('#sound').remove();
+            document.getElementById(y).innerHTML += '<source id="sound" src="/static/sound/' + y + '" type="audio/mpeg">';
+            audio.play();
+        });
+
+    });
+</script>
+
+{% endblock%}

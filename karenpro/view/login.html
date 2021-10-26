@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
+  {% load static %}
+  <title>Document</title>
+  <link rel="stylesheet" href="{% static 'dist\css\bootstrap.min.css'%}">
+
+  <link href="{% static 'loginstyle.css'%}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+  <main class="form-signin">
+
+    <form action="username_pass" method="POST">
+      {% csrf_token %}
+      <img class="mb-4" src="{% static 'image/logo.png'%}" alt="" width="150px" height="120px">
+      <h1 class="h3 mb-3 fw-normal">ภาษากระเหรี่ยงสำหรับกายภาพ</h1>
+
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Username" name="username">
+        <label for="floatingInput">ชื่อผู้ใช้</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+        <label for="floatingPassword">รหัสผ่าน</label>
+      </div>
+
+
+      <a href="/mainpage"><button class="w-100 btn btn-lg "
+          style="background-color: #FFA69E;color: white;">เข้าสู่ระบบ</button></a>
+      {% if user == 'nouser'%}
+      <h3 class="h3 mb-3 fw-normal">ไม่พบข้อมูล</h4>
+      {%endif%}
+      <p class="mt-5 mb-3 text-muted">&copy; Maiteesolution</p>
+    </form>
+  </main>
+</body>
+
+</html>

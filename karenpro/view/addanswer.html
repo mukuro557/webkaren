@@ -1,0 +1,233 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'addanswersty.css'%}" rel="stylesheet">
+
+<div class="row">
+
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">คำถาม-ตอบ</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <button id="add_but" type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+                    data-target=".modal">
+                    <span data-feather="plus"></span>
+                    เพิ่ม
+                </button>
+            </div>
+        </div>
+
+        <!-- table -->
+
+        <div class="card-body">
+            <table id="myTable" class="table table-striped table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>คำถาม</th>
+                        <th>เสียง</th>
+                        <th>ตัวเลือกถามตอบ</th>
+                        <th>การกระทำ</th>
+                    </tr>
+                </thead>
+                {% for word in allword %}
+                <tr>
+                    <td>{{word.question}}</td>
+                    <td> <button id='{{word.question}}' data-target="{{word.Sound}}" class='btn1'
+                            style='background-color: grey;width: 40px;'><i class='fa fa-play'></i>
+                        </button>
+                        <audio id="{{word.Sound}}">
+                        </audio>
+                    </td>
+                    <td>{{word.choice}}</td>
+                    <td> <button id='{{word.choice}}' class='btn btn_edit' style='background-color: #A8DADC;color:white'
+                            target='{{word.question}}' data="{{word.id}}"  data-toggle="modal" data-target=".modal">แก้ไข</button>
+                        <form class="" action="/deleteques/{{word.id}}" method="POST">
+                            {% csrf_token %}
+                            <script LANGUAGE="JavaScript">
+
+                                function confirmSubmit(word) {
+                                    var agree = confirm("คุณต้องการลบคำว่า '" + word + "' ใช่หรือไม่?");
+                                    if (agree)
+                                        return true;
+                                    else
+                                        return false;
+                                }
+
+                            </script>
+
+                            <button type="submit" id="deletebut" class='btn btn_delete' name="submit"
+                                style='background-color: #FFA69E;color:white' value="{{word.pk}}"
+                                onclick="return confirmSubmit('{{word.Word_th}}')">ลบ</button>
+                        </form>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- end Table -->
+
+
+        <!-- modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">คำถาม</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="post" enctype="multipart/form-data" id="formcheck">
+                            {% csrf_token %}
+                            <script LANGUAGE="JavaScript">
+
+                                function confirmadd() {
+                                    let word
+                                    let fileInput = document.getElementById('file');
+                                    var fileName = fileInput.value.split(/(\\|\/)/g).pop();
+                                    let fil = document.getElementById('file1').value;
+                                    var fileName2 = fil.value.split(/(\\|\/)/g).pop();
+
+                                    if (fileName == '' || fileName == null || fileName == undefined || fileName2 == '' || fileName2 == undefined) {
+                                        var agree = confirm("กรุณาใส่ข้อมูลให้ครบ");
+                                        return false;
+                                    } else {
+                                        if ($('#exampleModalLabel').val() == 'เพิ่ม') {
+                                            word = $("#recipient-name").val()
+                                            var agree = confirm("คุณต้องการเพิ่ม '" + word + "' ใช่หรือไม่?");
+                                        } else {
+                                            word = $("#recipient-name").val()
+                                            var agree = confirm("คุณต้องการแก้คำว่า '" + word + "' ใช่หรือไม่?");
+                                        }
+
+                                        if (agree)
+                                            return true;
+                                        else
+                                            return false;
+                                    }
+                                }
+
+                            </script>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">คำถาม:</label>
+                                <input type="text" class="form-control" id="recipient-name" placeholder="คำถาม"
+                                    name="wordth">
+                                <div class="form-group">
+                                    <label for="message-text" class="col-form-label">อัพโหลดเสียง</label>
+                                    <div class="custom-file">
+                                        <input type="file" name="myfile" id="file">
+                                        <br><br>
+                                    </div>
+                                </div>
+                                <!-- คำตอบที่ 1 -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputCity">คำตอบที่ 1</label>
+                                        <input type="text" class="form-control" id="inputCity1" name="answer1">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inputState">เสียงคำตอบที่ 1</label>
+                                        <div class="custom-file">
+                                            <input type="file" name="ansfile1" id="file1" src="../karen/static/sound/ipone.mp3">
+                                            <br><br>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inputZip">เพิ่มไอคอน/รูปภาพ</label>
+                                        <input type="file" name="icon1" id="file2">
+                                    </div>
+                                </div>
+                                <div id="newanswer"></div>
+                                <button id="addans" type="button" class="btn">เพิ่มคำตอบ</button>
+                                <div id="explain"></div> <br>
+                                <button type="button" class="btn border" style="background-color: white;color: black;"
+                                    data-dismiss="modal">ยกเลิก</button>
+                                <button type="submit" class="btn btncon " onclick="return confirmadd()"
+                                    style="background-color: #457B9D;color: white;">ยืนยัน</button>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                let num
+                var edit
+                let idall
+                $("#myTable tbody").on("click", ".btn_edit", function () {
+                    
+                    idbut = this.id;
+                    edit = 1
+                    var x = document.getElementById(idbut).getAttribute("target");
+                    var str = document.getElementById(idbut).getAttribute("id");
+                    var choice = str.split("/");
+                    idall = document.getElementById(idbut).getAttribute("data");
+                    num = choice.length
+                    $('#newanswer').empty()
+                    $('#exampleModalLabel').text('แก้ไข')
+                    $('#exampleModalLabel').val('แก้ไข')
+                    $("#recipient-name").val(x)
+                    document.getElementById('formcheck').action = '/editques/' + idall +'/'+num
+                    var docccc = document.getElementById('formcheck').getAttribute("action");
+                    $('#inputCity1').val(choice[0])
+                    for(let i =2;i <= choice.length; i++){
+                        $('#newanswer').append('<div class="form-row"><div class="form-group col-md-6"><label for="inputCity">คำตอบที่ ' + i + ' </label><input type="text" class="form-control" id="inputCity'+i+'" name="answer'+i+'"> </div ><div class="form-group col-md-3"><label for="inputState">เสียงคำตอบที่ ' + i + '</label><div class="custom-file"><input type="file" name="ansfile' + i + '" id="file"><br><br></div></div><div class="form-group col-md-3"><label for="inputZip">เพิ่มไอคอน</label><input type="file" name="icon' + i + '" id="file2"></div></div>')
+                        $('#inputCity2').val(choice[i-1])
+                    }
+
+                });
+
+
+                $("#add_but").on("click", function () {
+                    edit = 0
+                    num = 1;
+                    $('#exampleModalLabel').text('เพิ่ม')
+                    $('#exampleModalLabel').val('เพิ่ม')
+                    $("#recipient-name").val('')
+                    $('.custom-file-label').val('')
+                    document.getElementById('file1').file = '/static/sound/ipone.mp3'
+                    document.getElementById('formcheck').action = '/addques/' + num
+                    var container = document.getElementById("newanswer");
+                    while (container.hasChildNodes()) {
+                        container.removeChild(container.lastChild);
+                    }
+
+                });
+
+                $(".btn1").on("click", function () {
+
+                    var y = document.getElementById(this.id).getAttribute("data-target");
+                    var audio = document.getElementById(y);
+                    audio.currentTime = 0;
+                    alert(y)
+                    $('#sound').remove();
+                    document.getElementById(y).innerHTML += '<source id="sound" src="/static/sound/' + y + '" type="audio/mpeg">';
+                    audio.play();
+                });
+
+                $('#addans').on('click', function () {
+                    num++;
+                    var container = document.getElementById("newanswer");
+                    $('#newanswer').append('<div class="form-row"><div class="form-group col-md-6"><label for="inputCity'+num+'">คำตอบที่ ' + num + ' </label><input type="text" class="form-control" id="inputCity" name="answer'+num+'"> </div ><div class="form-group col-md-3"><label for="inputState">เสียงคำตอบที่ ' + num + '</label><div class="custom-file"><input type="file" name="ansfile' + num + '" id="file"><br><br></div></div><div class="form-group col-md-3"><label for="inputZip">เพิ่มไอคอน</label><input type="file" name="icon' + num + '" id="file2"></div></div>')
+                    if (edit == 0) {
+                        document.getElementById('formcheck').action = '/addques/' + num
+                    } else {
+                        document.getElementById('formcheck').action = '/editques/' + idall +'/'+num
+                    }
+
+                });
+
+            });
+        </script>
+
+        {% endblock%}
