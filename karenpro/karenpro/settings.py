@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,10 +82,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'karensenior',
-        'USER':'root',
-        'PASSWORD':'',
-        'HOST':'localhost',
-        'PORT':''
+        'USER':'bd1ba3870e770f',
+        'PASSWORD':'bee54964',
+        'HOST':'us-cdbr-east-04.cleardb.com',
+        'PORT':'3306'
     }
 }
 
@@ -135,3 +136,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
 MEDIA_URL = '/karen/static/sound/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'karen/static/sound')
+# Activate Django-Heroku.
+django_heroku.settings(locals())
